@@ -3,28 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page with Notification Sound</title>
+  <title>Auto Refresh Page</title>
 </head>
 <body>
 
-<!-- Button to trigger notification sound -->
-<button onclick="playNotificationSound()">Play Notification</button>
+<!-- Add an audio element with the notification sound -->
+<audio id="notificationSound">
+  <source src="notification.mp3" type="audio/mp3">
+  Your browser does not support the audio tag.
+</audio>
+
+<!-- Add a message to instruct the user to click for sound -->
+<p>Click anywhere on the page to trigger the notification sound.</p>
 
 <script>
-function playNotificationSound() {
-  // Create an audio context
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-  // Create an oscillator node (represents a sound wave)
-  const oscillator = audioContext.createOscillator();
-
-  // Connect the oscillator to the audio context's destination (speakers)
-  oscillator.connect(audioContext.destination);
-
-  // Start and stop the oscillator to create a short sound
-  oscillator.start();
-  oscillator.stop(audioContext.currentTime + 100); // Stop after 0.5 seconds
+// Function to reload the page every 5 seconds
+function autoRefresh() {
+  setTimeout(function() {
+    location.reload();
+  }, 5000);
 }
+
+// Function to attempt to play the notification sound
+function playNotificationSound() {
+  var audio = document.getElementById('notificationSound');
+  if (audio) {
+    audio.play().then(function() {
+      // Sound played successfully
+    }).catch(function(error) {
+      // Auto-play failed, handle the error
+      console.error('Auto-play failed:', error);
+    });
+  }
+}
+
+// Set up the auto-refresh and click event listener
+document.addEventListener('DOMContentLoaded', function() {
+  autoRefresh(); // Start auto-refresh
+});
+
+document.addEventListener('click', function() {
+  playNotificationSound(); // Play notification sound on click
+});
 </script>
 
 </body>
