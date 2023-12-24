@@ -1,75 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        #result {
-            margin-top: 20px;
-        }
-
-        button {
-            margin-top: 20px;
-        }
-    </style>
-    <title>Location Check</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page with Notification Sound</title>
 </head>
 <body>
-    <h1>Location Check</h1>
-    <p>Click the button to check if you are within 10 km of a specific location.</p>
-    <button onclick="checkLocation()">Check My Location</button>
-    <p id="result"></p>
 
-    <script>
-        function checkLocation() {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                // User's current coordinates
-                const userLocation = {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                };
+<!-- Button to trigger notification sound -->
+<button onclick="playNotificationSound()">Play Notification Sound</button>
 
-                // Coordinates of the target location
-                const targetLocation = {
-                    latitude: 41.891930, // Update with the target latitude
-                    longitude: 12.511330 // Update with the target longitude
-                };
+<script>
+function playNotificationSound() {
+  // Create an audio context
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-                // Use Google Maps Distance Matrix API to get accurate distance information
-                const service = new google.maps.DistanceMatrixService();
-                service.getDistanceMatrix(
-                    {
-                        origins: [new google.maps.LatLng(userLocation.latitude, userLocation.longitude)],
-                        destinations: [new google.maps.LatLng(targetLocation.latitude, targetLocation.longitude)],
-                        travelMode: google.maps.TravelMode.DRIVING,
-                        unitSystem: google.maps.UnitSystem.METRIC
-                    },
-                    function(response, status) {
-                        if (status === 'OK') {
-                            const distance = response.rows[0].elements[0].distance.value / 1000; // Convert meters to kilometers
-                            const resultText = distance <= 10 ? 'You are within 10 km!' : 'You are more than 10 km away.';
-                            document.getElementById('result').innerHTML = resultText;
-                        } else {
-                            console.error('Error calculating distance:', status);
-                            document.getElementById('result').innerHTML = 'Error calculating distance. Please try again.';
-                        }
-                    }
-                );
-            }, function (error) {
-                console.error('Error getting user location:', error.message);
-                document.getElementById('result').innerHTML = 'Error getting user location. Please try again.';
-            });
-        }
-    </script>
-    <script src="https://api.distancematrix.ai/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=Zspp7IgeNPslRZzAQJlfi2mEDjIsDAmM5GOcuGkuIibKYs6W0UnnjvcYDVISbAhw"></script>
+  // Create an oscillator node (represents a sound wave)
+  const oscillator = audioContext.createOscillator();
+
+  // Connect the oscillator to the audio context's destination (speakers)
+  oscillator.connect(audioContext.destination);
+
+  // Start and stop the oscillator to create a short sound
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime + 0.5); // Stop after 0.5 seconds
+}
+</script>
+
 </body>
 </html>
